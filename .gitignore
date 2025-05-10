@@ -1,0 +1,34 @@
+# Archivos del servidor de Minecraft
+/world/
+/world_nether/
+/world_the_end/
+/logs/
+/crash-reports/
+/*.log
+/cache/
+
+# Archivos generados localmente
+/plugins/
+/libraries/
+*.jar
+!server.jar
+!paper.jar
+*.gz
+*.tar
+*.zip
+*.rar
+
+# Datos de usuarios
+banned-ips.json
+banned-players.json
+ops.json
+usercache.json
+whitelist.json
+permissions.yml
+
+# Otros
+.DS_Store
+Thumbs.db
+.env
+.idea/
+.vscode/ 
