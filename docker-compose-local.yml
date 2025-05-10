@@ -1,0 +1,26 @@
+services:
+  minecraft:
+    image: itzg/minecraft-server:java21
+    container_name: minecraft-server
+    ports:
+      - "25565:25565/tcp"
+      - "25566:25566/udp"
+    environment:
+      - MEMORY=2G
+      - VERSION=1.21.4
+      - TYPE=PAPER
+      - EULA=TRUE
+      - SERVER_PORT=25565
+      - DIFFICULTY=normal
+      - GEYSER=true
+      - GEYSER_PORT=25566
+      - FLOODGATE=true
+      - PLUGINS=https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/spigot,https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot,https://github.com/ViaVersion/ViaVersion/releases/download/5.3.2/ViaVersion-5.3.2.jar
+    volumes:
+      - minecraft-data:/data
+      - ./geyser-config.yml:/data/plugins/Geyser-Spigot/config.yml
+    restart: unless-stopped
+
+volumes:
+  minecraft-data:
+    driver: local 
