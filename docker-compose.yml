@@ -2,16 +2,15 @@ version: '3'
 
 services:
   minecraft:
-    build: .
+    image: itzg/minecraft-server:java21
     container_name: minecraft-server
     ports:
       - "25565:25565"
-      - "19132:19132/udp"
+      - "25566:19132/udp"
     environment:
-      - MEMORY=4G
-      - VERSION=1.21.4
-      - TYPE=FORGE
-      - FORGE_VERSION=latest
+      - MEMORY=6G
+      - VERSION=1.21.5
+      - TYPE=PAPER
       - EULA=TRUE
       - SERVER_PORT=25565
       - DIFFICULTY=normal
@@ -20,25 +19,43 @@ services:
       - LEVEL_TYPE=default
       - PVP=true
       - MAX_PLAYERS=20
-      - VIEW_DISTANCE=10
+      - VIEW_DISTANCE=8
+      - SIMULATION_DISTANCE=6
       - SPAWN_PROTECTION=16
-      - GEYSER=true
-      - GEYSER_PORT=19132
-      - FLOODGATE=true
+      - GEYSER_DOWNLOAD_URL=https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/spigot
+      - FLOODGATE_DOWNLOAD_URL=https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot
+      - OVERRIDE_SERVER_PROPERTIES=true
     volumes:
       - /var/lib/minecraft/data:/data
-      - /var/lib/minecraft/world:/data/world:ro
-      - /var/lib/minecraft/mods.txt:/mods.txt:ro
+      - /var/lib/minecraft/world:/data/world
     restart: unless-stopped
     deploy:
       resources:
         limits:
-          memory: 5G
+          memory: 7G
         reservations:
           memory: 4G
-    healthcheck:
-      test: ["CMD", "mc-health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 120s 
+
+  bedrock:
+    image: itzg/minecraft-bedrock-server:latest
+    container_name: minecraft-bedrock
+    ports:
+      - "25566:19132/udp"
+    environment:
+      - EULA=TRUE
+      - GAMEMODE=survival
+      - SERVER_NAME=Mi Servidor Bedrock
+      - DIFFICULTY=normal
+      - ALLOW_CHEATS=false
+      - VERSION=1.21.80
+      - LEVEL_NAME=world
+      - FORCE_GAMEMODE=false
+      - DEFAULT_PLAYER_PERMISSION_LEVEL=member
+      - TEXTUREPACK_REQUIRED=false
+      - LEVEL_SEED=${LEVEL_SEED}
+    volumes:
+      - /var/lib/minecraft/world:/data/worlds/world:ro
+      - /var/lib/minecraft/bedrock-data:/data
+    restart: unless-stopped
+    depends_on:
+      - minecraft 
