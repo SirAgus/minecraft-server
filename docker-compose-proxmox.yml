@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+  minecraft:
+    build: .
+    container_name: minecraft-server
+    ports:
+      - "25565:25565"
+      - "19132:19132/udp"
+    environment:
+      - MEMORY=4G
+      - VERSION=1.20.1
+      - TYPE=FORGE
+      - FORGE_VERSION=47.2.0
+      - EULA=TRUE
+      - SERVER_PORT=25565
+      - DIFFICULTY=normal
+      - ALLOW_NETHER=true
+      - ENABLE_COMMAND_BLOCK=true
+      - LEVEL_TYPE=default
+      - PVP=true
+      - MAX_PLAYERS=20
+      - VIEW_DISTANCE=10
+      - SPAWN_PROTECTION=16
+      - GEYSER=true
+      - GEYSER_PORT=19132
+      - FLOODGATE=true
+    volumes:
+      - /var/lib/minecraft/data:/data
+      - /var/lib/minecraft/world:/data/world:ro
+      - /var/lib/minecraft/mods.txt:/mods.txt:ro
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 5G
+        reservations:
+          memory: 4G
+    healthcheck:
+      test: ["CMD", "mc-health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s 
