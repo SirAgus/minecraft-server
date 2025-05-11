@@ -7,6 +7,7 @@ services:
     ports:
       - "25565:25565"
       - "25566:19132/udp"
+      
     environment:
       - MEMORY=6G
       - VERSION=1.21.5
