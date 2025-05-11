@@ -2,8 +2,8 @@ FROM itzg/minecraft-server:java21
 
 # Variables de entorno para configurar el servidor
 ENV TYPE=FORGE
-ENV VERSION=1.20.1
-ENV FORGE_VERSION=47.2.0
+ENV VERSION=1.21.4
+ENV FORGE_VERSION=latest
 ENV MEMORY=4G
 ENV EULA=TRUE
 ENV SERVER_PORT=25565
@@ -52,8 +52,8 @@ RUN chmod +x /start-custom.sh
 
 # Crear archivo de mods
 RUN echo "# Lista de mods a descargar" > /mods.txt
-RUN echo "https://mediafilez.forgecdn.net/files/4582/674/journeymap-1.20.1-5.9.18-forge.jar" >> /mods.txt
-RUN echo "https://mediafilez.forgecdn.net/files/4978/962/jei-1.20.1-forge-15.3.0.4.jar" >> /mods.txt
+RUN echo "https://mediafilez.forgecdn.net/files/5113/62/journeymap-1.21.4-5.9.22-fabric.jar" >> /mods.txt
+RUN echo "https://mediafilez.forgecdn.net/files/5182/350/jei-1.21.4-forge-17.3.0.49.jar" >> /mods.txt
 
 # Configurar puertos
 EXPOSE ${SERVER_PORT}/tcp

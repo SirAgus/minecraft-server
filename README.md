@@ -1,6 +1,6 @@
 # Servidor Minecraft Forge para Proxmox
 
-Este es un servidor de Minecraft con Forge y soporte para mods, diseñado para ser ejecutado en un entorno Proxmox.
+Este es un servidor de Minecraft con Forge y soporte para mods, diseñado para ser ejecutado en un entorno Proxmox. Compatible con Minecraft Java 1.21.4 y Bedrock 1.21.80.
 
 ## Requisitos
 - Proxmox VE 7.0 o superior
@@ -117,8 +117,8 @@ docker exec -it minecraft-server rcon-cli
 
 ## Características
 
-- **Forge**: Compatible con mods de Forge 1.20.1
-- **Geyser/Floodgate**: Permite la conexión desde Minecraft Bedrock (móviles, consolas)
+- **Forge**: Compatible con mods de Forge 1.21.4
+- **Geyser/Floodgate**: Permite la conexión desde Minecraft Bedrock 1.21.80
 - **Optimización para Proxmox**: Configuración recomendada para entornos virtualizados
 - **Mundo personalizado**: Permite usar un mundo ya existente
 - **Mod loader automático**: Descarga y configura los mods especificados automáticamente
@@ -126,5 +126,5 @@ docker exec -it minecraft-server rcon-cli
 ## Solución de problemas
 
 - Si el servidor no inicia, verifica los logs con `docker logs minecraft-server`
-- Asegúrate de que los mods sean compatibles con la versión de Forge especificada
+- Asegúrate de que los mods sean compatibles con la versión de Forge especificada (1.21.4)
 - Verifica que el mundo sea compatible con la versión de Minecraft configurada 

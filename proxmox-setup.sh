@@ -5,6 +5,7 @@
 set -e
 
 echo "=== Iniciando configuración de servidor Minecraft para Proxmox ==="
+echo "=== Java 1.21.4 y Bedrock 1.21.80 ==="
 
 # Verificar que se está ejecutando como root
 if [ "$EUID" -ne 0 ]; then
@@ -36,18 +37,21 @@ else
   exit 1
 fi
 
+# Hacer scripts ejecutables
+chmod +x *.sh
+
 # Crear archivo de mods de ejemplo si no existe
 if [ ! -f "/var/lib/minecraft/mods.txt" ]; then
   echo "Creando archivo de mods de ejemplo..."
   cat > /var/lib/minecraft/mods.txt << EOF
-# Lista de mods para Minecraft Forge 1.20.1
+# Lista de mods para Minecraft Forge 1.21.4
 # Añade o elimina URLs según sea necesario
 
 # JourneyMap (Minimapa)
-https://mediafilez.forgecdn.net/files/4582/674/journeymap-1.20.1-5.9.18-forge.jar
+https://mediafilez.forgecdn.net/files/5113/62/journeymap-1.21.4-5.9.22-fabric.jar
 
 # Just Enough Items (JEI)
-https://mediafilez.forgecdn.net/files/4978/962/jei-1.20.1-forge-15.3.0.4.jar
+https://mediafilez.forgecdn.net/files/5182/350/jei-1.21.4-forge-17.3.0.49.jar
 EOF
 fi
 
@@ -60,8 +64,11 @@ echo "- /var/lib/minecraft/world (mundo de Minecraft)"
 echo ""
 echo "Para usar un mundo predefinido:"
 echo "1. Copia los archivos de tu mundo existente a /var/lib/minecraft/world"
-echo "2. Asegúrate de que los archivos pertenezcan al usuario correcto:"
-echo "   chown -R 1000:1000 /var/lib/minecraft/world"
+echo "2. Usa el script: ./prepare-world.sh <ruta-al-mundo>"
+echo ""
+echo "Para gestionar mods:"
+echo "./manage-mods.sh list - Ver mods configurados"
+echo "./manage-mods.sh add <url> - Añadir un mod nuevo"
 echo ""
 echo "Para iniciar el servidor:"
 echo "cd $INSTALL_DIR && docker-compose up -d"
