@@ -27,7 +27,7 @@ apt-get update
 apt-get install -y docker.io docker-compose wget unzip git
 
 # Clonar o copiar archivos del repositorio
-if [ -f "docker-compose-proxmox.yml" ]; then
+if [ -f "docker-compose.yml" ]; then
   echo "Usando archivos existentes en el directorio actual"
   cp -r ./* "$INSTALL_DIR/"
 else
@@ -64,7 +64,7 @@ echo "2. Asegúrate de que los archivos pertenezcan al usuario correcto:"
 echo "   chown -R 1000:1000 /var/lib/minecraft/world"
 echo ""
 echo "Para iniciar el servidor:"
-echo "cd $INSTALL_DIR && docker-compose -f docker-compose-proxmox.yml up -d"
+echo "cd $INSTALL_DIR && docker-compose up -d"
 echo ""
 echo "Para ver los logs del servidor:"
 echo "docker logs -f minecraft-server" 
