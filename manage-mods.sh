@@ -1,164 +1,176 @@
 #!/bin/bash
 # Script para gestionar mods del servidor Minecraft
+# Uso: ./manage-mods.sh [list|add|remove|clear]
 
+# Definir archivo de mods y colores para salida
 MODS_FILE="/var/lib/minecraft/mods.txt"
-TEMP_FILE="/tmp/mods_temp.txt"
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
 
-function mostrar_ayuda {
-  echo "Uso: $0 [comando] [opciones]"
+# Verificar privilegios de root
+if [ "$EUID" -ne 0 ]; then
+  echo -e "${RED}Este script debe ejecutarse como root${NC}"
+  exit 1
+fi
+
+# Función para mostrar el uso del script
+show_usage() {
+  echo -e "${BLUE}Gestor de Mods para Servidor Minecraft${NC}"
   echo ""
-  echo "Comandos:"
-  echo "  list               - Listar todos los mods instalados"
-  echo "  add <url>          - Añadir un nuevo mod"
-  echo "  remove <numero>    - Eliminar un mod por su número en la lista"
-  echo "  clear              - Eliminar todos los mods"
-  echo "  help               - Mostrar esta ayuda"
+  echo -e "Uso: ${YELLOW}$0 COMANDO [ARGUMENTOS]${NC}"
+  echo ""
+  echo "Comandos disponibles:"
+  echo -e "  ${GREEN}list${NC}             Listar mods configurados actualmente"
+  echo -e "  ${GREEN}add URL${NC}          Añadir un nuevo mod usando su URL de descarga"
+  echo -e "  ${GREEN}remove NÚMERO${NC}    Eliminar un mod por su número en la lista"
+  echo -e "  ${GREEN}clear${NC}            Eliminar todos los mods configurados"
   echo ""
   echo "Ejemplos:"
-  echo "  $0 list"
-  echo "  $0 add https://example.com/mod.jar"
-  echo "  $0 remove 3"
+  echo -e "  ${YELLOW}$0 list${NC}"
+  echo -e "  ${YELLOW}$0 add https://example.com/ruta/al/mod.jar${NC}"
+  echo -e "  ${YELLOW}$0 remove 2${NC}"
+  echo ""
 }
 
-function listar_mods {
-  if [ ! -f "$MODS_FILE" ]; then
-    echo "No se encontró el archivo de mods en $MODS_FILE"
-    return 1
+# Función para listar los mods configurados
+list_mods() {
+  echo -e "${BLUE}=== Mods configurados ===${NC}"
+  
+  # Verificar si el archivo existe y tiene contenido
+  if [ ! -f "$MODS_FILE" ] || [ ! -s "$MODS_FILE" ] || [ -z "$(grep -v '^#' "$MODS_FILE")" ]; then
+    echo -e "${YELLOW}No hay mods configurados${NC}"
+    return
   fi
-  
-  echo "Lista de mods configurados:"
-  echo "-------------------------"
-  
-  contador=1
-  while IFS= read -r line || [ -n "$line" ]; do
-    if [[ $line != \#* ]] && [[ -n $line ]]; then
-      echo "$contador: $line"
-      let contador++
+
+  # Mostrar mods con números de línea, excluyendo comentarios
+  local mod_number=1
+  while IFS= read -r line; do
+    # Ignorar líneas que comienzan con # (comentarios)
+    if [[ ! $line =~ ^[[:space:]]*# ]] && [[ -n $line ]]; then
+      echo -e "${GREEN}$mod_number)${NC} $line"
+      ((mod_number++))
     fi
-  done < "$MODS_FILE"
-  
-  if [ $contador -eq 1 ]; then
-    echo "No hay mods configurados"
+  done < <(grep -v '^[[:space:]]*$' "$MODS_FILE" | grep -v '^[[:space:]]*#')
+
+  # Si no encontramos mods (solo comentarios)
+  if [ "$mod_number" -eq 1 ]; then
+    echo -e "${YELLOW}No hay mods configurados${NC}"
   fi
 }
 
-function agregar_mod {
+# Función para añadir un nuevo mod
+add_mod() {
   local url="$1"
   
+  # Validar URL
   if [ -z "$url" ]; then
-    echo "Error: URL del mod no especificada"
+    echo -e "${RED}Error: URL no especificada${NC}"
+    show_usage
     return 1
   fi
-  
-  # Crear archivo si no existe
+
+  # Validar formato de URL
+  if [[ ! $url =~ ^https?:// ]]; then
+    echo -e "${RED}Error: URL inválida. Debe comenzar con http:// o https://${NC}"
+    return 1
+  fi
+
+  # Verificar si el archivo existe, si no, crearlo
   if [ ! -f "$MODS_FILE" ]; then
-    mkdir -p "$(dirname "$MODS_FILE")"
     echo "# Lista de mods para Minecraft Forge" > "$MODS_FILE"
-    echo "# Añade URLs de mods, uno por línea" >> "$MODS_FILE"
+    echo "# Añade URLs de los mods, uno por línea" >> "$MODS_FILE"
     echo "" >> "$MODS_FILE"
   fi
-  
+
   # Verificar si el mod ya está en la lista
   if grep -q "$url" "$MODS_FILE"; then
-    echo "El mod ya existe en la lista"
-    return 0
+    echo -e "${YELLOW}El mod ya está en la lista${NC}"
+    return
   fi
-  
-  # Añadir el mod
+
+  # Añadir el mod al archivo
   echo "$url" >> "$MODS_FILE"
-  echo "Mod añadido: $url"
+  echo -e "${GREEN}Mod añadido correctamente${NC}"
+  
+  # Opcional: Mostrar lista actualizada
+  echo ""
+  list_mods
 }
 
-function eliminar_mod {
-  local numero="$1"
+# Función para eliminar un mod por número
+remove_mod() {
+  local mod_number="$1"
   
-  if [ ! -f "$MODS_FILE" ]; then
-    echo "No se encontró el archivo de mods en $MODS_FILE"
+  # Validar número
+  if [ -z "$mod_number" ] || ! [[ "$mod_number" =~ ^[0-9]+$ ]]; then
+    echo -e "${RED}Error: Debes especificar un número válido${NC}"
+    show_usage
     return 1
   fi
-  
-  if [ -z "$numero" ] || ! [[ "$numero" =~ ^[0-9]+$ ]]; then
-    echo "Error: Número de mod inválido"
+
+  # Verificar si el archivo existe
+  if [ ! -f "$MODS_FILE" ] || [ ! -s "$MODS_FILE" ]; then
+    echo -e "${RED}No hay mods configurados para eliminar${NC}"
     return 1
   fi
+
+  # Obtener la lista de mods (sin comentarios ni líneas vacías)
+  local mods_list=($(grep -v '^[[:space:]]*#' "$MODS_FILE" | grep -v '^[[:space:]]*$'))
   
-  # Contar líneas no comentadas
-  total_mods=0
-  while IFS= read -r line || [ -n "$line" ]; do
-    if [[ $line != \#* ]] && [[ -n $line ]]; then
-      let total_mods++
-    fi
-  done < "$MODS_FILE"
-  
-  if [ "$numero" -gt "$total_mods" ] || [ "$numero" -lt 1 ]; then
-    echo "Error: El número de mod $numero está fuera de rango (1-$total_mods)"
+  # Verificar si el número es válido
+  if [ "$mod_number" -lt 1 ] || [ "$mod_number" -gt "${#mods_list[@]}" ]; then
+    echo -e "${RED}Error: Número de mod inválido. Debe estar entre 1 y ${#mods_list[@]}${NC}"
     return 1
   fi
+
+  # Obtener URL del mod a eliminar (los arrays empiezan en 0)
+  local mod_to_remove="${mods_list[$mod_number-1]}"
   
-  # Encontrar y eliminar el mod
-  contador=0
-  > "$TEMP_FILE"
+  # Crear archivo temporal sin el mod
+  grep -v "$mod_to_remove" "$MODS_FILE" > "$MODS_FILE.tmp"
+  mv "$MODS_FILE.tmp" "$MODS_FILE"
   
-  while IFS= read -r line || [ -n "$line" ]; do
-    if [[ $line != \#* ]] && [[ -n $line ]]; then
-      let contador++
-      if [ "$contador" -ne "$numero" ]; then
-        echo "$line" >> "$TEMP_FILE"
-      else
-        mod_eliminado="$line"
-      fi
-    else
-      echo "$line" >> "$TEMP_FILE"
-    fi
-  done < "$MODS_FILE"
+  echo -e "${GREEN}Mod eliminado correctamente${NC}"
   
-  mv "$TEMP_FILE" "$MODS_FILE"
-  echo "Mod eliminado: $mod_eliminado"
+  # Mostrar lista actualizada
+  echo ""
+  list_mods
 }
 
-function limpiar_mods {
-  if [ ! -f "$MODS_FILE" ]; then
-    echo "No se encontró el archivo de mods en $MODS_FILE"
-    return 1
+# Función para eliminar todos los mods
+clear_mods() {
+  # Pedir confirmación
+  read -p "¿Estás seguro de querer eliminar TODOS los mods? (s/N): " confirm
+  if [[ ! $confirm =~ ^[Ss]$ ]]; then
+    echo -e "${YELLOW}Operación cancelada${NC}"
+    return
   fi
-  
+
   # Mantener solo las líneas de comentarios
-  > "$TEMP_FILE"
-  while IFS= read -r line || [ -n "$line" ]; do
-    if [[ $line == \#* ]] || [[ -z $line ]]; then
-      echo "$line" >> "$TEMP_FILE"
-    fi
-  done < "$MODS_FILE"
+  grep '^#' "$MODS_FILE" > "$MODS_FILE.tmp" 2>/dev/null || echo "# Lista de mods para Minecraft Forge" > "$MODS_FILE.tmp"
+  mv "$MODS_FILE.tmp" "$MODS_FILE"
   
-  mv "$TEMP_FILE" "$MODS_FILE"
-  echo "Se han eliminado todos los mods"
+  echo -e "${GREEN}Todos los mods han sido eliminados${NC}"
 }
 
 # Procesar comandos
-comando="$1"
-shift
-
-case "$comando" in
-  list|ls)
-    listar_mods
+case "$1" in
+  list)
+    list_mods
     ;;
   add)
-    agregar_mod "$1"
+    add_mod "$2"
     ;;
-  remove|rm)
-    eliminar_mod "$1"
+  remove)
+    remove_mod "$2"
     ;;
   clear)
-    limpiar_mods
-    ;;
-  help|-h|--help)
-    mostrar_ayuda
+    clear_mods
     ;;
   *)
-    echo "Comando desconocido: $comando"
-    mostrar_ayuda
-    exit 1
+    show_usage
     ;;
-esac
-
-exit 0 
+esac 

@@ -128,3 +128,28 @@ docker exec -it minecraft-server rcon-cli
 - Si el servidor no inicia, verifica los logs con `docker logs minecraft-server`
 - Asegúrate de que los mods sean compatibles con la versión de Forge especificada (1.21.4)
 - Verifica que el mundo sea compatible con la versión de Minecraft configurada 
+
+### Problemas de conectividad y DNS
+
+Si encuentras problemas de resolución de nombres o de conexión a Internet durante la instalación, puedes seguir estos pasos:
+
+1. Configura los servidores DNS manualmente:
+```bash
+echo "nameserver 8.8.8.8" > /etc/resolv.conf
+echo "nameserver 8.8.4.4" >> /etc/resolv.conf
+```
+
+2. Verifica la conectividad básica a Internet:
+```bash
+ping -c 4 8.8.8.8
+```
+
+3. Si los problemas persisten, verifica la configuración de red en Proxmox:
+   - Asegúrate de que el contenedor/VM tenga una dirección IP válida
+   - Verifica que el gateway esté configurado correctamente
+   - Comprueba que no haya reglas de firewall bloqueando la conexión
+
+4. Si usas NetworkManager, reinicia el servicio:
+```bash
+systemctl restart NetworkManager
+``` 

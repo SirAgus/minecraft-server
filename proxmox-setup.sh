@@ -13,6 +13,19 @@ if [ "$EUID" -ne 0 ]; then
   exit 1
 fi
 
+# Configurar DNS si hay problemas de conectividad
+echo "Configurando DNS..."
+cat > /etc/resolv.conf << EOF
+nameserver 8.8.8.8
+nameserver 8.8.4.4
+EOF
+
+# Desactivar IPv6 si causa problemas
+echo "Desactivando IPv6 temporalmente para la instalación..."
+echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf
+echo "net.ipv6.conf.default.disable_ipv6 = 1" >> /etc/sysctl.conf
+sysctl -p
+
 # Crear directorio de trabajo
 INSTALL_DIR="/opt/minecraft-server"
 mkdir -p "$INSTALL_DIR"
