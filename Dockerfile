@@ -34,4 +34,5 @@ ENV PLUGINS=https://download.geysermc.org/v2/projects/geyser/versions/latest/bui
 
 # Configurar puertos
 EXPOSE ${SERVER_PORT}/tcp
+EXPOSE ${GEYSER_PORT}/tcp
 EXPOSE ${GEYSER_PORT}/udp 
