@@ -7,8 +7,7 @@
   "deploy": {
     "numReplicas": 1,
     "startCommand": "",
-    "healthcheckPath": "/",
-    "healthcheckTimeout": 300,
+    "healthcheckEnabled": false,
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10,
     "envVars": {
@@ -17,6 +16,9 @@
       },
       "COPY_PLUGINS_ONLY_IF_NEWER": {
         "value": "false"
+      },
+      "SYNC_SKIP_NEWER_IN_DESTINATION": {
+        "value": "true"
       }
     }
   },

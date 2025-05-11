@@ -32,7 +32,14 @@ ENV COPY_PLUGINS_ONLY_IF_NEWER=false
 ENV SYNC_SKIP_NEWER_IN_DESTINATION=true
 ENV PLUGINS=https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/spigot,https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot,https://github.com/ViaVersion/ViaVersion/releases/download/5.3.2/ViaVersion-5.3.2.jar
 
+# Copiar script de inicio personalizado
+COPY start.sh /start-custom.sh
+RUN chmod +x /start-custom.sh
+
 # Configurar puertos
 EXPOSE ${SERVER_PORT}/tcp
 EXPOSE ${GEYSER_PORT}/tcp
-EXPOSE ${GEYSER_PORT}/udp 
+EXPOSE ${GEYSER_PORT}/udp
+
+# Usar nuestro script personalizado como punto de entrada
+CMD ["/start-custom.sh"] 
