@@ -11,6 +11,7 @@ services:
       - MEMORY=6G
       - VERSION=1.21.5
       - TYPE=PAPER
+      - PAPER_CHANNEL=experimental
       - EULA=TRUE
       - SERVER_PORT=25565
       - DIFFICULTY=normal
