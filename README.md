@@ -152,4 +152,39 @@ ping -c 4 8.8.8.8
 4. Si usas NetworkManager, reinicia el servicio:
 ```bash
 systemctl restart NetworkManager
+```
+
+## Configuración Cross-Platform (Java + Bedrock)
+
+Este servidor está configurado para permitir conexiones tanto desde Minecraft Java Edition (1.21.5) como desde Minecraft Bedrock Edition usando GeyserMC.
+
+### Instrucciones para conexión multiplataforma
+
+1. El servidor usa Paper (una versión optimizada de Spigot) con los plugins Geyser y Floodgate.
+2. Para que funcione correctamente, asegúrate de crear el directorio de configuración para Geyser:
+
+```bash
+# Crear directorio para la configuración de Geyser
+sudo mkdir -p /var/lib/minecraft/data/plugins/Geyser-Spigot
+
+# Copiar archivo de configuración
+sudo cp /opt/minecraft-server/geyser-config/config.yml /var/lib/minecraft/data/plugins/Geyser-Spigot/
+
+# Establecer permisos
+sudo chmod -R 777 /var/lib/minecraft/data/plugins
+```
+
+3. **Para conectarte desde Java Edition**: Usa la IP del servidor y puerto 25565
+4. **Para conectarte desde Bedrock Edition**: Usa la misma IP y puerto 25566
+
+### Solución de problemas
+
+Si tienes problemas con la conexión desde Bedrock:
+
+```bash
+# Verificar que Geyser se ha cargado correctamente
+sudo docker logs minecraft-server | grep -i geyser
+
+# Si no aparece, reinicia el servidor
+sudo docker-compose restart minecraft-server
 ``` 

@@ -1,0 +1,32 @@
+bedrock:
+  # The IP address that will listen for connections. Generally, you should keep this at 0.0.0.0
+  # to listen on all interfaces. If you are only connecting locally, you can set this to 127.0.0.1
+  address: 0.0.0.0
+  # The port that Geyser will listen on
+  port: 19132
+  # Whether to use MOTD as a Crowdin Project or server name
+  motd1: "Minecraft Server"
+  motd2: "Java + Bedrock"
+  # The MOTD shown in the server list
+  server-name: "Minecraft Server"
+  # Whether to authenticate players with Xbox Live. Can be:
+  # - online - Players must be authenticated with Xbox Live. (Default)
+  # - floodgate - Players must connect through Floodgate.
+  # - offline - No authentication required.
+  auth-type: online
+
+remote:
+  # The Java server IP address
+  address: 127.0.0.1
+  # The Java server port (25565 is the default)
+  port: 25565
+  # Authentication type: online or offline
+  auth-type: online
+
+# Configures the remote section of this config, see the Geyser wiki for more info
+# https://wiki.geysermc.org/geyser/understanding-the-config/
+
+# Compress the packets sent to Bedrock clients
+# This saves bandwidth at the cost of a bit more CPU usage
+# Don't disable this unless you know what you're doing
+compress-packets: false 

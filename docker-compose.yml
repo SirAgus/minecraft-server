@@ -7,7 +7,6 @@ services:
     ports:
       - "25565:25565"
       - "25566:19132/udp"
-      
     environment:
       - MEMORY=6G
       - VERSION=1.21.5
@@ -35,28 +34,4 @@ services:
         limits:
           memory: 7G
         reservations:
-          memory: 4G
-
-  bedrock:
-    image: itzg/minecraft-bedrock-server:latest
-    container_name: minecraft-bedrock
-    ports:
-      - "25566:19132/udp"
-    environment:
-      - EULA=TRUE
-      - GAMEMODE=survival
-      - SERVER_NAME=Mi Servidor Bedrock
-      - DIFFICULTY=normal
-      - ALLOW_CHEATS=false
-      - VERSION=1.21.80
-      - LEVEL_NAME=world
-      - FORCE_GAMEMODE=false
-      - DEFAULT_PLAYER_PERMISSION_LEVEL=member
-      - TEXTUREPACK_REQUIRED=false
-      - LEVEL_SEED=${LEVEL_SEED}
-    volumes:
-      - /var/lib/minecraft/world:/data/worlds/world:ro
-      - /var/lib/minecraft/bedrock-data:/data
-    restart: unless-stopped
-    depends_on:
-      - minecraft 
+          memory: 4G 

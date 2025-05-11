@@ -31,4 +31,8 @@ permissions.yml
 Thumbs.db
 .env
 .idea/
-.vscode/ 
+.vscode/
+
+# Excepciones para archivos de configuración
+!geyser-config/
+!geyser-config/config.yml 
