@@ -13,17 +13,21 @@ Este servidor permite jugar tanto desde Minecraft Java como desde Minecraft Bedr
 1. Clona este repositorio o descarga los archivos
 2. Dale permisos de ejecución a los scripts:
    ```bash
-   chmod +x setup-mods.sh install-geyser.sh start.sh
+   chmod +x setup-mods.sh install-geyser.sh start.sh fix-permissions.sh
    ```
 3. Ejecuta el script de configuración:
    ```bash
    ./setup-mods.sh
    ```
-4. Para habilitar soporte de Bedrock, ejecuta:
+4. Si encuentras problemas de permisos, ejecuta:
+   ```bash
+   ./fix-permissions.sh
+   ```
+5. Para habilitar soporte de Bedrock, ejecuta:
    ```bash
    ./install-geyser.sh
    ```
-5. Reinicia el servidor:
+6. Reinicia el servidor:
    ```bash
    docker-compose restart
    ```
@@ -70,6 +74,7 @@ Para añadir add-ons de Bedrock, usa el script proporcionado:
 - Detener servidor: `docker-compose down`
 - Ver logs en tiempo real: `docker-compose logs -f`
 - Reiniciar servidor: `docker-compose restart`
+- Arreglar permisos: `./fix-permissions.sh`
 
 ## Personalización
 
@@ -81,10 +86,20 @@ Puedes editar el archivo `docker-compose.yml` para ajustar:
 
 ## Solución de problemas
 
-Si tienes problemas con la conexión desde Bedrock:
-1. Asegúrate de que el puerto 19132 UDP esté abierto en tu router/firewall
-2. Verifica que la versión de tu cliente Bedrock sea compatible (1.20.x o superior)
-3. Revisar logs con `docker-compose logs -f`
+### Problemas comunes
+
+1. **Error de acceso a archivos o permisos denegados**:
+   Ejecuta el script de corrección de permisos: `./fix-permissions.sh`
+
+2. **Problemas con la conexión desde Bedrock**:
+   - Asegúrate de que el puerto 19132 UDP esté abierto en tu router/firewall
+   - Verifica que la versión de tu cliente Bedrock sea compatible (1.20.x o superior)
+   - Revisar logs con `docker-compose logs -f`
+
+3. **El servidor no se inicia**:
+   - Comprueba si hay errores en los logs: `docker-compose logs`
+   - Verifica que todos los puertos necesarios estén disponibles
+   - Reinicia el servicio de Docker: `sudo systemctl restart docker`
 
 ## Respaldo
 

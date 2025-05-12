@@ -24,9 +24,12 @@ services:
       - ONLINE_MODE=false   # Necesario para Geyser
       - OVERRIDE_SERVER_PROPERTIES=true
       - FORCE_REDOWNLOAD=true
+      - UID=1000
+      - GID=1000
     volumes:
       - ./data:/data
     restart: unless-stopped
+    user: 1000:1000
     deploy:
       resources:
         limits:
