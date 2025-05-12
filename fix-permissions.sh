@@ -25,10 +25,15 @@ echo -e "${YELLOW}Eliminando archivos de bloqueo...${NC}"
 find ./data -name "session.lock" -type f -delete
 find ./data -name "*.lock" -type f -delete
 
-# Arreglar permisos
+# Si existe el archivo problemático, eliminarlo
+echo -e "${YELLOW}Eliminando archivos problemáticos...${NC}"
+[ -f "./data/.rcon-cli.env" ] && rm -f ./data/.rcon-cli.env
+
+# Dar permisos completos a la carpeta data
 echo -e "${YELLOW}Configurando permisos...${NC}"
-chmod -R 775 ./data
-chown -R $USER:$USER ./data
+chmod -R 777 ./data
+# Asegurarnos de que cualquier usuario puede escribir en el directorio
+[ -d "./data" ] && chmod 777 ./data
 
 # Reiniciar el servidor
 echo -e "${GREEN}Permisos arreglados. Iniciando el servidor...${NC}"
