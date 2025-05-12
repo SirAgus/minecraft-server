@@ -5,15 +5,12 @@ services:
     image: itzg/minecraft-server:java21
     container_name: minecraft-server
     ports:
-      - "25565:25565"
-      - "25566:19132/udp"
+      - "25565:25565"   # Puerto Java
+      - "19132:19132/udp"   # Puerto Bedrock
     environment:
-      - MEMORY=6G
+      - MEMORY=4G
       - VERSION=1.20.4
-      # Alternativa: mantener 1.21.5 pero con canal experimental
-      # - VERSION=1.21.5
-      # - PAPER_CHANNEL=experimental
-      - TYPE=PAPER
+      - TYPE=FABRIC   # Usamos Fabric para soportar mods
       - EULA=TRUE
       - SERVER_PORT=25565
       - DIFFICULTY=normal
@@ -25,19 +22,18 @@ services:
       - VIEW_DISTANCE=8
       - SIMULATION_DISTANCE=6
       - SPAWN_PROTECTION=16
-      - GEYSER_DOWNLOAD_URL=https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/spigot
-      - FLOODGATE_DOWNLOAD_URL=https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot
+      - ONLINE_MODE=false   # Necesario para Geyser
       - OVERRIDE_SERVER_PROPERTIES=true
       - FORCE_REDOWNLOAD=true
-      - FORCE_WORLD_COPY=true
-      - WORLD=/tmp/world_backup
+      - GEYSER=true   # Habilitar Geyser para compatibilidad con Bedrock
+      - FLOODGATE=true   # Habilitar Floodgate para autenticación Bedrock
+      - GEYSER_BEDROCK_VERSION=1.21.80   # Versión específica de Bedrock
     volumes:
-      - /var/lib/minecraft/data:/data
-      - /var/lib/minecraft/world:/tmp/world_backup:ro
+      - ./data:/data
     restart: unless-stopped
     deploy:
       resources:
         limits:
-          memory: 7G
+          memory: 5G
         reservations:
           memory: 4G 

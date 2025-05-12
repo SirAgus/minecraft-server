@@ -1,60 +1,44 @@
 #!/bin/bash
-set -e
+# Script de inicio rápido para el servidor Minecraft
 
-# Imprimir información para depuración
-echo "======= INFORMACIÓN DEL ENTORNO ======="
-echo "Iniciando servidor Minecraft con Forge y mods..."
-echo "SERVER_PORT: $SERVER_PORT"
-echo "GEYSER_PORT: $GEYSER_PORT"
-echo "MEMORY: $MEMORY"
-echo "VERSION: $VERSION"
-echo "FORGE_VERSION: $FORGE_VERSION"
-echo "Directorio actual: $(pwd)"
-echo "========================================"
+# Colores
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m'
 
-# Comprobar si ya existe el mundo
-if [ ! -d "/data/world" ] || [ -z "$(ls -A /data/world)" ]; then
-  echo "No se encontró mundo existente, se creará uno nuevo"
+echo -e "${BLUE}=== Iniciando Servidor Minecraft Java + Bedrock ===${NC}"
+
+# Verificar si Docker está instalado
+if ! command -v docker &> /dev/null; then
+    echo -e "${YELLOW}Docker no está instalado. Instálalo primero.${NC}"
+    exit 1
+fi
+
+# Verificar si Docker Compose está instalado
+if ! command -v docker-compose &> /dev/null; then
+    echo -e "${YELLOW}Docker Compose no está instalado. Instálalo primero.${NC}"
+    exit 1
+fi
+
+# Verificar si ya se ha configurado el servidor
+if [ ! -d "./data/mods" ]; then
+    echo -e "${YELLOW}Configuración inicial no detectada. Ejecutando setup-mods.sh...${NC}"
+    chmod +x setup-mods.sh
+    ./setup-mods.sh
 else
-  echo "Mundo existente encontrado en /data/world"
+    # Iniciar el servidor si ya está configurado
+    echo -e "${YELLOW}Iniciando el servidor...${NC}"
+    docker-compose up -d
+    
+    echo -e "${GREEN}¡Servidor iniciado!${NC}"
+    echo -e "${YELLOW}Información de conexión:${NC}"
+    echo -e "1. Java: IP del servidor, puerto 25565"
+    echo -e "2. Bedrock: IP del servidor, puerto 19132"
+    echo -e ""
+    echo -e "Para ver los logs: ${BLUE}docker-compose logs -f${NC}"
+    echo -e "Para detener el servidor: ${BLUE}docker-compose down${NC}"
 fi
 
-# Descargar mods definidos en el archivo
-if [ -f "$MODS_FILE" ]; then
-  echo "Descargando mods desde $MODS_FILE"
-  mkdir -p /data/mods
-  while IFS= read -r line || [ -n "$line" ]; do
-    # Ignorar líneas que comienzan con #
-    if [[ $line != \#* ]] && [[ -n $line ]]; then
-      echo "Descargando: $line"
-      wget -q -O "/data/mods/$(basename "$line")" "$line" || echo "Error al descargar $line"
-    fi
-  done < "$MODS_FILE"
-  echo "Mods descargados. Contenido de /data/mods:"
-  ls -la /data/mods
-fi
-
-# Comprobar espacio disponible
-echo "Espacio en disco disponible:"
-df -h
-
-# Comprobar memoria disponible
-echo "Memoria disponible:"
-free -h
-
-# Iniciar el servidor
-echo "Iniciando servidor con /start..."
-exec /start
-
-# Nota: Este código no se ejecutará si exec es exitoso
-echo "El servidor terminó. Comprobando logs..."
-if [ -f /data/logs/latest.log ]; then
-  echo "===== ÚLTIMAS 50 LÍNEAS DEL LOG DEL SERVIDOR ====="
-  tail -n 50 /data/logs/latest.log
-else
-  echo "No se encontró el archivo de log del servidor"
-fi
-
-# Siempre devolver éxito para que Railway no reinicie el contenedor
-# (esto es para depuración únicamente - eliminar después)
-exit 0 
+# Hacer el script ejecutable
+chmod +x "$0" 
