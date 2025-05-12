@@ -10,13 +10,12 @@ services:
     environment:
       - MEMORY=4G
       - VERSION=1.20.4
-      - TYPE=FABRIC   # Usamos Fabric para soportar mods
+      - TYPE=PAPER   # Cambiamos a Paper para mejor estabilidad
       - EULA=TRUE
       - SERVER_PORT=25565
       - DIFFICULTY=normal
       - ALLOW_NETHER=true
       - ENABLE_COMMAND_BLOCK=true
-      - LEVEL_TYPE=default
       - PVP=true
       - MAX_PLAYERS=20
       - VIEW_DISTANCE=8
@@ -25,9 +24,6 @@ services:
       - ONLINE_MODE=false   # Necesario para Geyser
       - OVERRIDE_SERVER_PROPERTIES=true
       - FORCE_REDOWNLOAD=true
-      - GEYSER=true   # Habilitar Geyser para compatibilidad con Bedrock
-      - FLOODGATE=true   # Habilitar Floodgate para autenticación Bedrock
-      - GEYSER_BEDROCK_VERSION=1.21.80   # Versión específica de Bedrock
     volumes:
       - ./data:/data
     restart: unless-stopped
