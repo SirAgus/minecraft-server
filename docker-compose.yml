@@ -9,9 +9,8 @@ services:
       - "25566:19132/udp"
     environment:
       - MEMORY=6G
-      - VERSION=1.21.5
+      - VERSION=1.20.4
       - TYPE=PAPER
-      - PAPER_CHANNEL=experimental
       - EULA=TRUE
       - SERVER_PORT=25565
       - DIFFICULTY=normal
@@ -23,9 +22,9 @@ services:
       - VIEW_DISTANCE=8
       - SIMULATION_DISTANCE=6
       - SPAWN_PROTECTION=16
-      - GEYSER_DOWNLOAD_URL=https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/spigot
-      - FLOODGATE_DOWNLOAD_URL=https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot
       - OVERRIDE_SERVER_PROPERTIES=true
+      - ONLINE_MODE=false
+      - FORCE_REDOWNLOAD=true
     volumes:
       - /var/lib/minecraft/data:/data
       - /var/lib/minecraft/world:/data/world
