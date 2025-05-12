@@ -28,9 +28,12 @@ services:
       - GEYSER_DOWNLOAD_URL=https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/spigot
       - FLOODGATE_DOWNLOAD_URL=https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot
       - OVERRIDE_SERVER_PROPERTIES=true
+      - FORCE_REDOWNLOAD=true
+      - FORCE_WORLD_COPY=true
+      - WORLD=/tmp/world_backup
     volumes:
       - /var/lib/minecraft/data:/data
-      - /var/lib/minecraft/world:/data/world
+      - /var/lib/minecraft/world:/tmp/world_backup:ro
     restart: unless-stopped
     deploy:
       resources:
